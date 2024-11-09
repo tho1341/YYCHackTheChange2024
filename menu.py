@@ -1,5 +1,5 @@
 import pygame
-from settings import WHITE, BLUE, BLACK, font, small_font
+from YYCHackTheChange2024.settings import WHITE, BLUE, BLACK, font, small_font
 
 menu_options = ["Start", "Options", "Quit"]
 selected_option = 0

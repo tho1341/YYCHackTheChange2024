@@ -1,7 +1,7 @@
 import pygame
 import sys
 from player import Player
-from settings import WHITE, BLACK
+from YYCHackTheChange2024.settings import WHITE, BLACK
 
 # Main game loop
 def game_loop(screen):

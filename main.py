@@ -2,7 +2,7 @@ import pygame
 import sys
 from YYCHackTheChange2024.menu import draw_main_menu, handle_menu_events, selected_option
 from YYCHackTheChange2024.game import game_loop
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT
+from YYCHackTheChange2024.settings import SCREEN_WIDTH, SCREEN_HEIGHT
 
 # Initialize Pygame
 pygame.init()

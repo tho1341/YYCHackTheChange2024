@@ -1,7 +1,7 @@
 # scenarios/scenario1.py
 
 import pygame
-from settings import BLACK, scenario_font
+from YYCHackTheChange2024.settings import BLACK, scenario_font
 import sys
 
 def run_scenario(screen, player):

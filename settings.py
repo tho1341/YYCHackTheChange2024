@@ -1,3 +1,5 @@
+# settings.py
+
 import pygame
 
 # Screen dimensions
@@ -14,4 +16,4 @@ character_size = 50
 pygame.font.init()
 font = pygame.font.Font(None, 74)
 small_font = pygame.font.Font(None, 50)
-scenario_font = pygame.font.Font(None, 40)
+scenario_font = pygame.font.Font(None, 30)

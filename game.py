@@ -1,30 +1,29 @@
 import pygame
 import sys
 from player import Player
-from YYCHackTheChange2024.settings import WHITE, BLACK
+from scenarios import scenario1, scenario2, scenario3  # Import your scenarios
+from settings import WHITE, BLACK  # Adjusted import
 
 # Main game loop
 def game_loop(screen):
     player = Player(400, 300)
     all_sprites = pygame.sprite.Group(player)
     
-    # Initialize which scenario to play (e.g., scenario1)
-    current_scenario = scenario1
+    # List of scenarios to play
+    scenarios = [scenario1, scenario2, scenario3]
+    current_scenario_index = 0
 
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-
-        # Update sprites
-        all_sprites.update()
+    while current_scenario_index < len(scenarios):
+        current_scenario = scenarios[current_scenario_index]
         
-        # Draw background and sprites
+        # Clear the screen and reset player position if needed
         screen.fill(WHITE)
-        all_sprites.draw(screen)
-
+        player.rect.topleft = (400, 300)
+        
         # Run the current scenario logic
-        current_scenario.run_scenario(screen, player)  # Pass player to scenario
+        current_scenario.run_scenario(screen, player)  # Pass player to scenario if required
+        
+        current_scenario_index += 1  # Move to the next scenario
 
-        pygame.display.flip()
+    # After all scenarios are complete, you can return to the main menu or end the game
+    return

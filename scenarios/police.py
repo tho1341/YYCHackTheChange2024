@@ -1,6 +1,10 @@
-
+import os
 import pygame
 import sys
+
+# Set the working directory to the script's directory
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
 
 pygame.init()
 
@@ -14,9 +18,9 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
 # Load Images
-background_image = pygame.image.load("./images/sample.png")
-character_car_image = pygame.image.load("./images/car.png")
-police_car_image = pygame.image.load("./images/car.png")
+background_image = pygame.image.load("../images/sample.png")
+character_car_image = pygame.image.load("../images/car.png")
+police_car_image = pygame.image.load("../images/car.png")
 
 # Resize images if necessary
 background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))

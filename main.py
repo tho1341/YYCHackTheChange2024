@@ -1,35 +1,29 @@
 import pygame
 import sys
-from YYCHackTheChange2024.menu import draw_main_menu, handle_menu_events, selected_option
-from YYCHackTheChange2024.game import game_loop
-from YYCHackTheChange2024.settings import SCREEN_WIDTH, SCREEN_HEIGHT
+from player import Player
+from scenarios import scenario1  # Import your scenarios
+from settings import WHITE, BLACK  # Adjusted import
 
-# Initialize Pygame
-pygame.init()
+# Main game loop
+def game_loop(screen):
+    player = Player(400, 300)
+    all_sprites = pygame.sprite.Group(player)
+    
+    # List of scenarios to play
+    scenarios = [scenario1]
+    current_scenario_index = 0
 
-# Screen setup
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Game Main Menu")
+    while current_scenario_index < len(scenarios):
+        current_scenario = scenarios[current_scenario_index]
+        
+        # Clear the screen and reset player position if needed
+        screen.fill(WHITE)
+        player.rect.topleft = (400, 300)
+        
+        # Run the current scenario logic
+        current_scenario.run_scenario(screen, player)  # Pass player to scenario if required
+        
+        current_scenario_index += 1  # Move to the next scenario
 
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-
-        # Handle menu events
-        handle_menu_events(event)
-
-    # Draw the main menu
-    draw_main_menu(screen)
-    pygame.display.flip()
-
-    # Check if "Start" is selected
-    if selected_option == 0:
-        game_loop(screen)  # Start the main game loop
-        selected_option = -1  # Reset to return to menu after scenario
-
-    elif selected_option == 2:  # Quit option
-        pygame.quit()
-        sys.exit()
+    # After all scenarios are complete, you can return to the main menu or end the game
+    return

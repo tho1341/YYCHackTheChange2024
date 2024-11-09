@@ -1,5 +1,8 @@
+# menu.py
+
 import pygame
-from YYCHackTheChange2024.settings import WHITE, BLUE, BLACK, font, small_font
+from settings import WHITE, BLUE, BLACK, font, small_font
+import sys
 
 menu_options = ["Start", "Options", "Quit"]
 selected_option = 0
@@ -24,6 +27,9 @@ def handle_menu_events(event):
         elif event.key == pygame.K_DOWN:
             selected_option = (selected_option + 1) % len(menu_options)
         elif event.key == pygame.K_RETURN:
-            if selected_option == 2:  # Quit
+            if menu_options[selected_option] == "Quit":
                 pygame.quit()
                 sys.exit()
+            elif menu_options[selected_option] == "Start":
+                # Start game
+                pass

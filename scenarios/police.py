@@ -2,40 +2,42 @@ import os
 import pygame
 import sys
 
-# Set the working directory to the script's directory
+# Set up working directory to the script’s location
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
-
 
 pygame.init()
 
 # Screen settings
 WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Canadian Driving")
+pygame.display.set_caption("Canadian Law Adventure")
 
 # Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+DIALOGUE_BOX_COLOR = (0, 0, 0, 128)  # Semi-transparent black for the dialogue box
 
 # Load Images
 background_image = pygame.image.load("../images/sample.png")
 character_car_image = pygame.image.load("../images/car.png")
 police_car_image = pygame.image.load("../images/car.png")
+exclamation_image = pygame.image.load("../images/exclamation.png")
 
 # Resize images if necessary
 background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
 character_car_image = pygame.transform.scale(character_car_image, (100, 50))
 police_car_image = pygame.transform.scale(police_car_image, (100, 50))
+exclamation_image = pygame.transform.scale(exclamation_image, (30, 30))
 
 # Initial positions
-# Position the cop car in front of the character car, both lower on the screen
-character_car_pos = [WIDTH - 150, HEIGHT // 2 + 65]  # Lower on the screen
-police_car_pos = [WIDTH - 500, HEIGHT // 2 + 65]  # Slightly in front of the character car
+character_car_pos = [WIDTH - 150, HEIGHT // 2 + 65]
+police_car_pos = [WIDTH - 500, HEIGHT // 2 + 65]
 
 # Font settings
 main_font = pygame.font.Font(None, 36)
 
 def draw_text_wrapped(surface, text, font, color, x, y, max_width):
+    """Draw wrapped text."""
     words = text.split()
     lines = []
     current_line = []
@@ -63,28 +65,63 @@ def draw_text_wrapped(surface, text, font, color, x, y, max_width):
 
     return y_offset
 
-def show_dialogue():
-    dialogue_running = True
-    option_selected = None
+def show_exclamation():
+    """Display an exclamation above the police car briefly."""
+    exclamation_pos = (police_car_pos[0] + 35, police_car_pos[1] - 40)
+    screen.blit(exclamation_image, exclamation_pos)
+    pygame.display.flip()
+    pygame.time.wait(500)  # Show the exclamation for half a second
 
-    # Dialogue options
+def show_dialogue_with_next():
+    """Display the dialogue box, text, and wait for Space to proceed."""
+    dialogue_text = (
+        "The officer has stopped you and asked for identification. Under Canadian law, "
+        "you generally have the right to ask why you're being stopped. In specific cases, "
+        "like driving, you may need to show ID."
+    )
+
+    # Draw dialogue box and text
+    dialogue_box = pygame.Surface((WIDTH, 150), pygame.SRCALPHA)
+    dialogue_box.fill(DIALOGUE_BOX_COLOR)
+    screen.blit(dialogue_box, (0, HEIGHT - 150))
+
+    draw_text_wrapped(screen, dialogue_text, main_font, WHITE, 20, HEIGHT - 130, WIDTH - 40)
+    pygame.display.flip()
+
+    # Wait for Space key to proceed
+    waiting_for_space = True
+    while waiting_for_space:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                waiting_for_space = False
+
+def show_options():
+    """Display options after Space is pressed."""
+    screen.fill(WHITE)  # Clear the screen for new content
+    dialogue_box = pygame.Surface((WIDTH, 150), pygame.SRCALPHA)
+    dialogue_box.fill(DIALOGUE_BOX_COLOR)
+    screen.blit(dialogue_box, (0, HEIGHT - 150))
+
+    options_text = (
+        "Based on what you've learned, how would you respond?"
+    )
+    draw_text_wrapped(screen, options_text, main_font, WHITE, 20, HEIGHT - 130, WIDTH - 40)
+
     options = [
-        "Comply and politely ask why.",
-        "Refuse to show ID and walk away."
+        "Press 1 to Comply and politely ask why.",
+        "Press 2 to Refuse to show ID and walk away."
     ]
+    for i, option in enumerate(options):
+        draw_text_wrapped(screen, option, main_font, WHITE, 20, HEIGHT - 90 + i * 30, WIDTH - 40)
 
-    while dialogue_running:
-        screen.fill(WHITE)
-        
-        # Display scenario text
-        draw_text_wrapped(screen, "The officer has stopped you and asked for identification.", main_font, BLACK, 50, 50, WIDTH - 100)
-        
-        # Display choices
-        for i, option in enumerate(options):
-            text = f"{i + 1}. {option}"
-            draw_text_wrapped(screen, text, main_font, BLACK, 100, 200 + i * 50, WIDTH - 200)
-        
-        # Handle option selection
+    pygame.display.flip()
+
+    # Handle option selection
+    option_selected = None
+    while option_selected is None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -92,29 +129,34 @@ def show_dialogue():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_1:
                     option_selected = options[0]
-                    dialogue_running = False
                 elif event.key == pygame.K_2:
                     option_selected = options[1]
-                    dialogue_running = False
-
-        pygame.display.flip()
 
     display_consequences(option_selected)
 
 def display_consequences(selected_option):
+    """Display the consequence based on the player's choice."""
     screen.fill(WHITE)
     feedback = ""
 
-    if selected_option == "Comply and politely ask why.":
-        feedback = ("Good choice. You have the right to know why you're being stopped, and "
-                    "interacting respectfully is usually the best approach.")
-    elif selected_option == "Refuse to show ID and walk away.":
-        feedback = ("This may not be the best option. In some cases, refusing to comply without knowing your rights "
-                    "can lead to further questioning or suspicion.")
+    if selected_option == "Press 1 to Comply and politely ask why.":
+        feedback = (
+            "Good choice! You have the right to know why you're being stopped. "
+            "Interacting respectfully can help de-escalate the situation."
+        )
+    elif selected_option == "Press 2 to Refuse to show ID and walk away.":
+        feedback = (
+            "This may not be the best option. Refusing to comply can lead to further questioning. "
+            "In some cases, such as traffic stops, you are legally required to show ID."
+        )
+
+    dialogue_box = pygame.Surface((WIDTH, 150), pygame.SRCALPHA)
+    dialogue_box.fill(DIALOGUE_BOX_COLOR)
+    screen.blit(dialogue_box, (0, HEIGHT - 150))
     
-    draw_text_wrapped(screen, feedback, main_font, BLACK, 50, HEIGHT // 2, WIDTH - 100)
+    draw_text_wrapped(screen, feedback, main_font, WHITE, 20, HEIGHT - 130, WIDTH - 40)
     pygame.display.flip()
-    pygame.time.wait(3000)
+    pygame.time.wait(9000)
 
 def main():
     dialogue_active = False
@@ -122,14 +164,11 @@ def main():
     while True:
         screen.blit(background_image, (0, 0))
 
-
-        # Event handling
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
 
-        # Character movement with arrow keys
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
             character_car_pos[0] -= 0.2
@@ -140,18 +179,17 @@ def main():
         if keys[pygame.K_DOWN]:
             character_car_pos[1] += 0.2
 
-        # Draw the cars
         screen.blit(character_car_image, character_car_pos)
         screen.blit(police_car_image, police_car_pos)
 
-        # Create rects for collision detection
         character_rect = pygame.Rect(character_car_pos[0], character_car_pos[1], character_car_image.get_width(), character_car_image.get_height())
         police_rect = pygame.Rect(police_car_pos[0], police_car_pos[1], police_car_image.get_width(), police_car_image.get_height())
 
-        # Check for collision between character and cop car
         if character_rect.colliderect(police_rect) and not dialogue_active:
-            dialogue_active = True  # Activate dialogue on collision
-            show_dialogue()
+            dialogue_active = True
+            show_exclamation()
+            show_dialogue_with_next()  # Show dialogue and wait for Space to proceed
+            show_options()  # Show options after Space is pressed
 
         pygame.display.flip()
 
